@@ -50,12 +50,27 @@ class epsilon_greedy_rl(object):
             self.means[machine_ind] = (itter-1)*self.means[machine_ind]/itter + res/itter
 
     def train_agent(self, nitter):
+        res = [[0, 0, 0]]
         self.means = [0, 0, 0]
         #print(self.means)
         #print('initial mean: {}'.format(str(self.means)))
         for itter in range(nitter):
             #print('itteration {}'.format(str(itter)))
             self.PlayOneRound(itter)
+            res.append(self.means[:])
+        res=pd.DataFrame(res)
+        res.plot()
+        plt.show()
+        return res
 
+import matplotlib.pyplot as plt
+import pandas as pd
 
+agent = epsilon_greedy_rl(0.001, [0.1, 0.3, 0.6])
+print(agent.train_agent(20000))
 
+agent1 = epsilon_greedy_rl(0.01, [0.1, 0.3, 0.6])
+print(agent1.train_agent(20000))
+
+agent2 = epsilon_greedy_rl(0.6, [0.1, 0.3, 0.6])
+print(agent2.train_agent(200000))
