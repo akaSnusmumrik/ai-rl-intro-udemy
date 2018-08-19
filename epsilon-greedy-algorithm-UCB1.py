@@ -29,7 +29,7 @@ class epsilon_greedy_rl(object):
             #reevaluate mean probability
             self.means[machine_ind] = (self.counts[machine_ind]-1)*self.means[
                 machine_ind]/self.counts[machine_ind] + res/self.counts[machine_ind] + np.sqrt(
-                2*np.log10(itter+0.000000000001)/self.counts[machine_ind])
+                2*np.log(itter+1)/self.counts[machine_ind])
 
     def train_agent(self, nitter):
         res = pd.DataFrame([self.means])
