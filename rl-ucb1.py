@@ -4,10 +4,11 @@ import random
 #nitter, epsilon, prob_lst_a=[0.5, 0.5],
 #                        prob_lst_b=[0.5, 0.5],
 #                        prob_lst_c=[0.5, 0.5]
-class epsilon_greedy_rl(object):
+class ucb1(object):
 
     def __init__(self, win_probs):
         self.means = [10, 10, 10]
+        self.ucb = [10, 10, 10]
         self.win_prob_lst = win_probs
         self.counts = [1,1,1]
 
@@ -23,22 +24,23 @@ class epsilon_greedy_rl(object):
 
     def PlayOneRound(self, itter):
             #play machhine with a max win probability
-            machine_ind = np.argmax(self.means)
+            machine_ind = np.argmax(self.ucb)
             res = self.play_machine(machine_ind)
             self.counts[machine_ind]+=1
             #reevaluate mean probability
             self.means[machine_ind] = (self.counts[machine_ind]-1)*self.means[
-                machine_ind]/self.counts[machine_ind] + res/self.counts[machine_ind] + np.sqrt(
+                machine_ind]/self.counts[machine_ind] + res/self.counts[machine_ind]
+            self.ucb[machine_ind] = self.means[machine_ind] + np.sqrt(
                 2*np.log(itter+1)/self.counts[machine_ind])
 
     def train_agent(self, nitter):
-        res = pd.DataFrame([self.means])
+        res = pd.DataFrame([self.ucb])
         #print(self.means)
         #print('initial mean: {}'.format(str(self.means)))
         for itter in range(nitter):
             #print('itteration {}'.format(str(itter)))
             self.PlayOneRound(itter)
-            res=res.append([self.means], ignore_index=True)
+            res=res.append([self.ucb], ignore_index=True)
         #res=pd.DataFrame(res)
         res.plot()
         plt.show()
@@ -47,5 +49,5 @@ class epsilon_greedy_rl(object):
 import matplotlib.pyplot as plt
 import pandas as pd
 
-agent = epsilon_greedy_rl([0.1, 0.3, 0.6])
-print(agent.train_agent(20000))
+agent = ucb1([0.1, 0.3, 0.6])
+print(agent.train_agent(10000))
